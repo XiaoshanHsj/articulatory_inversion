@@ -1,5 +1,5 @@
 # Inversion-articulatoire
-
+# Hsj forked
 Inversion-articulatoire is a Python library for training/testing neural network models for the acoustic to articulatory reconstruction.\
 The task is the following : based on the acoustic signal of a speech, predict articulatory trajectories of the speaker.
 

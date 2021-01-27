@@ -10,6 +10,9 @@ speakers = ["F01", "F03", "F04", "FC01", "FC02", "FC03","M01", "M02", "M03", "M0
 
 def process():
     for sp in speakers:
+        if not os.path.exists(des_path+"/"+sp):
+            print("create " + des_path+"/"+sp)
+            os.mkdir(des_path+"/"+sp)
         temp_path = ori_path + "/" + sp
         dirs = os.listdir(temp_path)
         # 遍历Session
@@ -23,6 +26,7 @@ def process():
                     # 处理pos
                     pos_list = os.listdir(sess+"/pos")
                     if not os.path.exists(des_path+"/"+sp+"/pos"):
+                        print("create " + des_path+"/"+sp+"/pos")
                         os.mkdir(des_path+"/"+sp+"/pos")
                     for p in pos_list:
                         if p[-4:] != ".pos":
@@ -34,6 +38,7 @@ def process():
                     # 处理wav
                     wav_list = os.listdir(sess+"/wav_arrayMic")
                     if not os.path.exists(des_path+"/"+sp+"/wav"):
+                        print("create " + des_path+"/"+sp+"/wav")
                         os.mkdir(des_path+"/"+sp+"/wav")
                     for p in wav_list:
                         if p[-4:] != ".wav":

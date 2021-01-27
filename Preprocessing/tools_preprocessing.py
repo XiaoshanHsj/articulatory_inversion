@@ -56,7 +56,7 @@ def get_speakers_per_corpus(corpus):
     elif corpus == "mocha":
         speakers = ["fsew0", "msak0", "faet0", "ffes0", "maps0", "mjjn0", "falh0"]
     elif corpus == "torgo":
-        speakers = ["F01", "F03", "F04", "FC01", "FC02", "FC03","M01", "M02", "M03", "M04", "M05", "MC01", "MC02", "MC03", "MC04"]
+        speakers = ["F03", "F04", "FC01", "FC02", "FC03","M01", "M02", "M03", "M04", "M05", "MC01", "MC02", "MC03", "MC04"]
     else:
         raise NameError("vous navez pas choisi un des corpus")
     return speakers

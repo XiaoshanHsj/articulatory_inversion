@@ -32,11 +32,11 @@ class Speaker_TORGO(Speaker):
     def __init__(self, sp, path_to_raw, N_max = 0):
         super().__init__(sp)
         self.root_path = path_to_raw
-        self.path_ema_files = os.path.join(self.root_path, "Raw_data", self.speaker, "pos")
+        self.path_ema_files = os.path.join(self.root_path, "Raw_data",self.corpus, self.speaker, "pos")
         self.EMA_files = sorted([name[:-4] for name in os.listdir(self.path_ema_files) if name.endswith('.pos')])
         self.path_files_treated = os.path.join(root_path, "Preprocessed_data", self.speaker)
-        self.path_files_brutes = os.path.join(self.root_path, "Raw_data", self.speaker)
-        self.path_wav_files = os.path.join(self.root_path, "Raw_data", self.speaker, "wav")
+        self.path_files_brutes = os.path.join(self.root_path, "Raw_data",self.corpus, self.speaker)
+        self.path_wav_files = os.path.join(self.root_path, "Raw_data",self.corpus, self.speaker, "wav")
 
         self.N_max = N_max
 

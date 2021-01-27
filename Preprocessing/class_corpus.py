@@ -229,7 +229,7 @@ class Speaker():
                 reader = csv.reader(csvFile, dialect="myDialect")
                 next(reader)
                 for row in reader:
-                    if row[0] == self.speaker: # we look for our speaker
+                    if row[0] == self.speaker and row[-1] == self.corpus: # we look for our speaker
                         arti_to_consider = row[1:19]  # 1 if available
             arti_not_avail = [k for k, n in enumerate(arti_to_consider) if n == "0"] # 1 of NOT available
             return arti_not_avail

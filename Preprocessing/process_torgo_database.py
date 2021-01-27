@@ -1,7 +1,7 @@
 import os,sys,shutil
 
 ori_path = "/project_bdda3/bdda/sjhu/Data/torgo"
-des_path = "/project_bdda3/bdda/sjhu/Data/Raw_data"
+des_path = "/project_bdda3/bdda/sjhu/Data/Raw_data/torgo"
 speakers = ["F01", "F03", "F04", "FC01", "FC02", "FC03","M01", "M02", "M03", "M04", "M05", "MC01", "MC02", "MC03", "MC04"]
 
 # 对于每一个说话人，依次扫描SESSION,如果有pos和wav_array就就复制到Raw_data/torgo中

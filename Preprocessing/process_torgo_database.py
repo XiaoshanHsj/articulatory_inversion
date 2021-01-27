@@ -10,9 +10,6 @@ speakers = ["F01", "F03", "F04", "FC01", "FC02", "FC03","M01", "M02", "M03", "M0
 
 def process():
     for sp in speakers:
-        if not os.path.exists(des_path+"/"+sp):
-            print("create " + des_path+"/"+sp)
-            os.mkdir(des_path+"/"+sp)
         temp_path = ori_path + "/" + sp
         dirs = os.listdir(temp_path)
         flag = False
@@ -24,6 +21,9 @@ def process():
                 # 满足条件
                 if "pos" in content and "wav_arrayMic" in content:
                     flag = True
+                    if not os.path.exists(des_path+"/"+sp):
+                        print("create " + des_path+"/"+sp)
+                        os.mkdir(des_path+"/"+sp)
                     pre = d + "_"
                     # 处理pos
                     pos_list = os.listdir(sess+"/pos")

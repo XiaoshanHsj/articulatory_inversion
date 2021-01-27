@@ -67,7 +67,7 @@ class Speaker_TORGO(Speaker):
         """
 
         path_ema_file = os.path.join(self.path_ema_files, self.EMA_files[k] + ".pos")
-        ema_data = np.fromfile(filename, dtype='<f4', count=-1).reshape((-1, 7, 12))
+        ema_data = np.fromfile(path_ema_file, dtype='<f4', count=-1).reshape((-1, 7, 12))
         ema = np.zeros(len(ema_data), len(order_arti_torgo))
 
         for arti in range(7):

@@ -67,13 +67,13 @@ class Speaker_TORGO(Speaker):
         """
 
         path_ema_file = os.path.join(self.path_ema_files, self.EMA_files[k] + ".pos")
-        ema_data = np.fromfile(path_ema_file, dtype='<f4', count=-1).reshape((-1, 7, 12))
+        ema_data = np.fromfile(path_ema_file, dtype='<f4', count=-1).reshape((-1, 12, 7))
         ema = np.zeros((len(ema_data), len(order_arti_torgo)))
 
         for arti in range(12):
             for j in range(len(ema_data)):
-                ema[j][(arti - 1) * 2] = ema_data[j][0][arti]
-                ema[j][arti * 2 - 1] = ema_data[j][2][arti]
+                ema[j][(arti - 1) * 2] = ema_data[j][arti][0]
+                ema[j][arti * 2 - 1] = ema_data[j][arti][2]
         new_order_arti = [order_arti_torgo.index(col) for col in order_arti]
         ema = ema[:, new_order_arti]
 

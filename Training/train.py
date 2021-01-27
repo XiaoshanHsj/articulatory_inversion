@@ -88,13 +88,16 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
     """
     f_loss_train = open('training_loss.csv', 'w')
     f_loss_valid = open('valid_loss.csv', 'w')
+    # 语料库
     corpus_to_train_on = corpus_to_train_on[1:-1].split(",")
+    # 训练说话人
     speakers_to_train_on = speakers_to_train_on[1:-1].replace("'", "").replace('"', '').replace(' ', '').split(",")
     if speakers_to_train_on == [""] or speakers_to_train_on == []:
         train_on = which_speakers_to_train_on(corpus_to_train_on, test_on, config)
     else:
         train_on = speakers_to_train_on
 
+    # 验证说话人
     speakers_to_valid_on = speakers_to_valid_on[1:-1].replace("'", "").replace('"', '').replace(' ', '').split(",")
     if speakers_to_valid_on == [""] or speakers_to_valid_on == []:
         valid_on = []
@@ -114,6 +117,7 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
     if not os.path.exists("saved_models"):
         os.mkdir("saved_models")
 
+    # 是否存在之前的模型
     previous_models = os.listdir("saved_models")
     previous_models_2 = [x[:len(name_file)] for x in previous_models if x.endswith(".txt")]
     n_previous_same = previous_models_2.count(name_file)  # how many times our model was trained
@@ -126,6 +130,7 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
     # this script doesnt continue a previous training if it was ended ie if there is a .txt
     print("going to train the model with name",name_file)
 
+    # 判断是否有cuda
     cuda_avail = torch.cuda.is_available()
     print(" cuda ?", cuda_avail)
     if cuda_avail:
@@ -133,11 +138,17 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
     else:
         device = torch.device("cpu")
 
+    # 隐藏层维度
     hidden_dim = 300
+    # 输入声学特征维度
     input_dim = 429
+    # mini_batch
     batch_size = 10
+    # 输出arti维度
     output_dim = 18
+    # 初始化一个EarlyStopping对象
     early_stopping = EarlyStopping(name_file, patience=patience, verbose=True)
+    # 初始化网络模型
     model = my_ac2art_model(hidden_dim=hidden_dim, input_dim=input_dim, name_file=name_file, output_dim=output_dim,
                             batch_size=batch_size, cuda_avail=cuda_avail,
                             filter_type=filter_type, batch_norma=batch_norma)
@@ -145,6 +156,7 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
     file_weights = os.path.join("saved_models", name_file +".pt")
     if cuda_avail:
         model = model.to(device=device)
+    # 重新训练
     if relearn:
         load_old_model = True
         if load_old_model:
@@ -161,9 +173,10 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
                 model.load_state_dict(model_dict)
 
 
-
+    # 得到训练数据、验证数据和测试数据
     files_per_categ, files_for_test = give_me_train_valid_test_filenames(train_on=train_on,test_on=test_on,config=config,batch_size= batch_size, valid_on=valid_on)
 
+    # 优化器是Adam
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     categs_to_consider = files_per_categ.keys()
@@ -172,16 +185,19 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
     plot_filtre_chaque_epochs = False
 
     for epoch in range(n_epochs):
+        # lowpass指低通滤波器
         weights = model.lowpass.weight.data[0, 0, :].cpu()
         if plot_filtre_chaque_epochs :
             plot_filtre(weights)
         n_this_epoch = 0
+        # 打乱数据集
         random.shuffle(list(categs_to_consider))
         loss_train_this_epoch = 0
         loss_pearson = 0
         loss_rmse = 0
         for categ in categs_to_consider:
             files_this_categ_courant = files_per_categ[categ]["train"]
+            # 打乱训练集
             random.shuffle(files_this_categ_courant)
             while len(files_this_categ_courant) > 0: # go through all  the files batch by batch
                 n_this_epoch+=1
@@ -194,6 +210,7 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
                 y_pred = model(x).double()
                 if cuda_avail:
                     y_pred = y_pred.to(device=device)
+                # 得到预测值y
                 y = y.double ()
                 optimizer.zero_grad()
                 if select_arti:
@@ -202,7 +219,8 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
                     y_pred[:, :, idx_to_ignore] = 0 #the grad associated to this value will be zero  : CHECK THAT
                    # y_pred[:,:,idx_to_ignore].detach()
                     #y[:,:,idx_to_ignore].requires_grad = False
-
+                
+                # 得到损失值
                 loss = criterion_both(y, y_pred,alpha=loss_train, cuda_avail = cuda_avail, device=device)
                 loss.backward()
                 optimizer.step()
@@ -212,19 +230,22 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
                 loss_pearson += loss_2.item()
                 loss_3 = torch.nn.MSELoss(reduction='sum')(y, y_pred)
                 loss_rmse += loss_3.item()
+                # 释放显存
                 torch.cuda.empty_cache()
                 loss_train_this_epoch += loss.item()
 
         torch.cuda.empty_cache()
 
+        # both loss的平均值
         loss_train_this_epoch = loss_train_this_epoch/n_this_epoch
         print("Training loss for epoch", epoch, ': ', loss_train_this_epoch)
         f_loss_train.write(str(epoch) + ',' + str(loss_train_this_epoch) + ',' + str(loss_pearson/n_this_epoch/batch_size/18.*(-1.)) + ',' + str(loss_rmse/n_this_epoch/batch_size) + '\n')
-        if epoch%delta_test == 0:  #toutes les delta_test epochs on évalue le modèle sur validation et on sauvegarde le modele si le score est meilleur
+        if epoch%delta_test == 0:  #所有delta test epochs在验证后对模型进行评估，如果分数更好，则保存模型
             loss_vali = 0
             n_valid = 0
             loss_pearson = 0
             loss_rmse = 0
+            # validation
             for categ in categs_to_consider:  # de A à F pour le moment
                 files_this_categ_courant = files_per_categ[categ]["valid"]  # on na pas encore apprit dessus au cours de cette epoch
                 while len(files_this_categ_courant) >0 :
@@ -258,12 +279,13 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
         torch.cuda.empty_cache()
         model.all_validation_loss.append(loss_vali)
         model.all_training_loss.append(loss_train_this_epoch)
+        # 判断是否需要停止
         early_stopping(loss_vali, model)
         if early_stopping.early_stop:
             print("Early stopping, n epochs : ", model.epoch_ref + epoch)
             break
 
-        if epoch > 0:  # on divise le learning rate par deux dès qu'on surapprend un peu par rapport au validation set
+        if epoch > 0:  # 当我们对集合验证过度学习时，我们将学习率除以2。
             if loss_vali > model.all_validation_loss[-1]:
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = param_group['lr'] / 2
@@ -271,19 +293,23 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
 
 
     if n_epochs > 0:
-        model.epoch_ref = model.epoch_ref + epoch  # voir si ca marche vrmt pour les rares cas ou on continue un training
+        model.epoch_ref = model.epoch_ref + epoch  # See if VRMT is effective in rare situations, or we can continue training
         model.load_state_dict(torch.load(os.path.join("saved_models",name_file+'.pt')))
-        torch.save(model.state_dict(), os.path.join( "saved_models",name_file+".txt")) #lorsque .txt ==> training terminé !
+        torch.save(model.state_dict(), os.path.join( "saved_models",name_file+".txt")) #保存 .txt ==> training 终止 !
+    
+    # 打乱测试集
     random.shuffle(files_for_test)
     x, y = load_np_ema_and_mfcc(files_for_test)
     print("evaluation on speaker {}".format(test_on))
     std_speaker = np.load(os.path.join(root_folder,"Preprocessing","norm_values","std_ema_"+test_on+".npy"))
     arti_per_speaker = os.path.join(root_folder, "Preprocessing", "articulators_per_speaker.csv")
+    # 以分号作为分隔
     csv.register_dialect('myDialect', delimiter=';')
     with open(arti_per_speaker, 'r') as csvFile:
         reader = csv.reader(csvFile, dialect="myDialect")
         next(reader)
         for row in reader:
+            # 得到test的全部有效arti
             if row[0] == test_on:
                 arti_to_consider = row[1:19]
                 arti_to_consider = [int(x) for x in arti_to_consider]
@@ -305,9 +331,11 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
             rien, pearson_valid_temp = model.evaluate_on_test(x,y,std_speaker=1, to_plot=to_plot,
                                                                  to_consider=arti_to_consider,verbose=False)
             pearson_valid_temp = np.reshape(np.array(pearson_valid_temp),(1,output_dim))
+            # 把所有的pearson_valid拼接起来
             pearson_valid = np.concatenate((pearson_valid,pearson_valid_temp),axis=0)
     pearson_valid = pearson_valid[1:,:]
     pearson_valid[np.isnan(pearson_valid)] = 0
+    # 得到pearson_valid
     pearson_valid = np.mean(pearson_valid,axis=0)
     print("on validation set :mean :\n",pearson_valid)
     print("training done for : ",name_file)
@@ -325,6 +353,7 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
     with open('model_results.csv', 'a',newline = "") as f:
         writer = csv.writer(f)
         row_details = [name_file,test_on,config,name_corpus_concat,loss_train,model.epoch_ref]
+        # mean + items
         row_rmse = row_details + ["rmse_on_test", np.mean(rmse_per_arti_mean[rmse_per_arti_mean!=0])] +\
                    rmse_per_arti_mean.tolist()
 

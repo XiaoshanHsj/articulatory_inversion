@@ -9,6 +9,7 @@ from Preprocessing.preprocessing_haskins import Preprocessing_general_haskins
 from Preprocessing.preprocessing_mngu0 import Preprocessing_general_mngu0
 from Preprocessing.preprocessing_usc_timit import Preprocessing_general_usc
 from Preprocessing.preprocessing_mocha import Preprocessing_general_mocha
+from Preprocessing.preprocessing_torgo import Preprocessing_general_torgo
 import argparse
 from multiprocessing import Process
 
@@ -27,6 +28,8 @@ def Preprocessing_general_per_corpus(corp, max, path_to_corpus):
         Preprocessing_general_haskins(max, path_to_raw=path_to_corpus)
     elif corp == "mocha":
         Preprocessing_general_mocha(max, path_to_raw=path_to_corpus)
+    elif corp == "torgo":
+        Preprocessing_general_torgo(max, path_to_raw=path_to_corpus)
 
 
 if __name__ == '__main__':

@@ -73,6 +73,7 @@ class my_ac2art_model(torch.nn.Module):
         self.lstm_layer = torch.nn.LSTM(input_size=hidden_dim,
                                         hidden_size=hidden_dim, num_layers=1,
                                         bidirectional=True)
+        #TODO 为什么维度是hidden_dim * 2
         self.batch_norm_layer =  torch.nn.BatchNorm1d(hidden_dim*2)
         self.lstm_layer_2= torch.nn.LSTM(input_size=hidden_dim*2,
                                        hidden_size=hidden_dim, num_layers=1,
@@ -93,6 +94,7 @@ class my_ac2art_model(torch.nn.Module):
         self.all_test_loss = []
         self.name_file = name_file
         self.lowpass = None
+        # filter_layer是一个卷积层，作用是smooth
         self.init_filter_layer()
         self.cuda_avail = cuda_avail
 
@@ -119,6 +121,7 @@ class my_ac2art_model(torch.nn.Module):
         new_x = torch.zeros((B, max_length, self.input_dim), dtype=torch.double)
         new_y = torch.zeros((B, max_length, self.output_dim), dtype=torch.double)
         for j in range(B):
+            # 在下边添加维度，使得所有数据的行数都一样
             zeropad = torch.nn.ZeroPad2d((0, 0, 0, max_length - len(x[j])))
             new_x[j] = zeropad(torch.from_numpy(x[j])).double()
             new_y[j] = zeropad(torch.from_numpy(y[j])).double()
@@ -187,9 +190,10 @@ class my_ac2art_model(torch.nn.Module):
         """
         fc = self.cutoff / self.sampling_rate
         if fc > 0.5:
-            raise Exception("La frequence de coupure doit etre au moins deux fois la frequence dechantillonnage")
+            raise Exception("截止频率应至少为采样频率的两倍")
         b = 0.08  # Transition band, as a fraction of the sampling rate (in (0, 0.5)).
         N = int(np.ceil((4 / b)))  # le window
+        # N必须是偶数
         if not N % 2:
             N += 1  # Make sure that N is odd.
         self.N = N
@@ -218,6 +222,7 @@ class my_ac2art_model(torch.nn.Module):
         must_be_5 = 5
         padding = int(0.5 * ((C_in - 1) * stride - C_in + must_be_5)) + 23
         weight_init = weight_init.view((1, 1, -1))
+        # kernel_size = N
         lowpass = torch.nn.Conv1d(C_in, self.output_dim, self.N, stride=1, padding=padding, bias=False)
 
         if self.filter_type == "unfix":  # we let the weights move

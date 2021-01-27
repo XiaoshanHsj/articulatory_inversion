@@ -49,6 +49,7 @@ def detect_silence(ma_data):
     return [mon_debut, ma_fin]
 
 
+
 class Speaker_Haskins(Speaker):
     """
     class for 1 speaker of Haskins, child of the Speaker class (in class_corpus.py),
@@ -107,7 +108,7 @@ class Speaker_Haskins(Speaker):
         data = sio.loadmat(os.path.join(self.path_files_brutes, self.EMA_files[k] + ".mat"))[self.EMA_files[k]][0]
         ema = np.zeros((len(data[1][2]), len(order_arti_haskins)))
 
-        for arti in range(1, len(data)):  # lecture des trajectoires articulatoires dans le dicionnaire
+        for arti in range(1, len(data)):  # 在二分法中读取关节轨迹
             ema[:, (arti - 1) * 2] = data[arti][2][:, 0]
             ema[:, arti * 2 - 1] = data[arti][2][:, 2]
         new_order_arti = [order_arti_haskins.index(col) for col in order_arti]

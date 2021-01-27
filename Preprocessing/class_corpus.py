@@ -37,6 +37,7 @@ class Speaker():
         self.get_corpus_name()
         self.sampling_rate_wav_wanted = 16000
         self.frame_time = 25 / 1000
+        # 重叠
         self.hop_time = 10 / 1000
         self.hop_length = int(self.hop_time * self.sampling_rate_wav_wanted)
         self.frame_length = int(self.frame_time * self.sampling_rate_wav_wanted)
@@ -48,8 +49,10 @@ class Speaker():
         self.articulators = ['tt_x', 'tt_y', 'td_x', 'td_y', 'tb_x', 'tb_y', 'li_x', 'li_y'
             , 'ul_x', 'ul_y', 'll_x', 'll_y']
         self.speakers_with_velum = ["fsew0", "msak0", "faet0", "ffes0", "falh0"]
+        # 初始化采样频率
         self.init_corpus_param()
         self.EMA_files = None
+        # 加入了v_x和v_y
         if self.speaker in self.speakers_with_velum:
             self.articulators = ['tt_x', 'tt_y', 'td_x', 'td_y', 'tb_x', 'tb_y', 'li_x', 'li_y',
                                  'ul_x', 'ul_y', 'll_x', 'll_y', 'v_x', 'v_y']
@@ -74,6 +77,8 @@ class Speaker():
             corpus = "Haskins"
         elif self.speaker in  ["fsew0", "msak0", "faet0", "ffes0", "maps0", "mjjn0", "falh0"]:
             corpus = "mocha"
+        elif self.speaker.find("Session") != -1:
+            corpus = "torgo"
         else:
             raise NameError("vous navez pas choisi un des speasker")
         self.corpus = corpus
@@ -101,6 +106,11 @@ class Speaker():
             self.sampling_rate_wav = 44100
             self.sampling_rate_ema = 100
             self.cutoff = 20
+        
+        elif self.corpus == "torgo":
+            self.sampling_rate_wav = 16000
+            self.sampling_rate_ema = 500
+            self.cutoff = 10
 
     def smooth_data(self, ema, sr=0):
         """

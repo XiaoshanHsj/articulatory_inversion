@@ -70,7 +70,7 @@ class Speaker_TORGO(Speaker):
         ema_data = np.fromfile(path_ema_file, dtype='<f4', count=-1).reshape((-1, 7, 12))
         ema = np.zeros((len(ema_data), len(order_arti_torgo)))
 
-        for arti in range(7):
+        for arti in range(12):
             for j in range(len(ema_data)):
                 ema[j][(arti - 1) * 2] = ema_data[j][0][arti]
                 ema[j][arti * 2 - 1] = ema_data[j][2][arti]

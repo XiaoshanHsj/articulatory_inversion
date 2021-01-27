@@ -157,7 +157,7 @@ def Preprocessing_general_torgo(N_max, path_to_raw):
     corpus = 'torgo'
     speakers_Has = get_speakers_per_corpus(corpus)
     for sp in speakers_Has:
-        print("In progress togo ",sp)
+        print("In progress togor ",sp)
         speaker = Speaker_TORGO(sp, path_to_raw=path_to_raw, N_max=N_max)
         speaker.Preprocessing_general_speaker()
         print("Done torgo ",sp)

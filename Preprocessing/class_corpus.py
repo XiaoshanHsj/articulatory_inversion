@@ -73,12 +73,12 @@ class Speaker():
             corpus = "MNGU0"
         elif self.speaker in ["F1", "F5", "M1", "M3"]:
             corpus ="usc"
-        elif self.speaker in   ["F01", "F02", "F03", "F04", "M01", "M02", "M03", "M04"] :
-            corpus = "Haskins"
+        #elif self.speaker in   ["F01", "F02", "F03", "F04", "M01", "M02", "M03", "M04"] :
+        #   corpus = "Haskins"
         elif self.speaker in  ["fsew0", "msak0", "faet0", "ffes0", "maps0", "mjjn0", "falh0"]:
             corpus = "mocha"
-        #elif self.speaker in ["F03", "F04", "FC01", "FC02", "FC03","M01", "M02", "M03", "M04", "M05", "MC01", "MC02", "MC03", "MC04"]:
-        #    corpus = "torgo"
+        elif self.speaker in ["F03", "F04", "FC01", "FC02", "FC03","M01", "M02", "M03", "M04", "M05", "MC01", "MC02", "MC03", "MC04"]:
+            corpus = "torgo"
         else:
             raise NameError("vous navez pas choisi un des speasker")
         self.corpus = corpus

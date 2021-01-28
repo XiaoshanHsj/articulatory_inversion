@@ -180,6 +180,9 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     categs_to_consider = files_per_categ.keys()
+
+    print("categs_to_consider:" + str(categs_to_consider))
+
     with open('categ_of_speakers.json', 'r') as fp:
         categ_of_speakers = json.load(fp)  # dict that gives for each category the speakers in it and the available arti
     plot_filtre_chaque_epochs = False

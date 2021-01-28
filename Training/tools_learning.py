@@ -49,8 +49,7 @@ def load_np_ema_and_mfcc(filenames):
     folder = os.path.join(os.path.dirname(os.getcwd()), "Preprocessed_data")
     x = []
     y = []
-    speakers = ["F01", "F02", "F03", "F04", "M01", "M02", "M03", "M04","F1", "F5", "M1", "M3"
-        , "maps0", "faet0", 'mjjn0', "ffes0", "MNGU0", "fsew0", "msak0","falh0"]
+    speakers = ["F03", "F04", "FC01", "FC02", "FC03","M01", "M02", "M03", "M04", "M05", "MC01", "MC02", "MC03", "MC04"]
     for filename in filenames:
         speaker = [s for s in speakers if s.lower() in filename.lower()][0] # we can deduce the speaker from the filename
         files_path = os.path.join(folder,speaker)
@@ -259,6 +258,7 @@ def give_me_train_valid_test_filenames(train_on, test_on, config, batch_size, va
     files_per_categ = dict()
 
     for categ in categ_of_speakers.keys():
+        # 得到每一个目录的说话人
         sp_in_categ = categ_of_speakers[categ]["sp"]
 
         files_train_this_categ = [[f for f in files_for_train if sp.lower() in f.lower()]

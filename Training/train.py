@@ -175,13 +175,15 @@ def train_model(test_on, n_epochs, loss_train, patience, select_arti, corpus_to_
 
     # 得到训练数据、验证数据和测试数据
     files_per_categ, files_for_test = give_me_train_valid_test_filenames(train_on=train_on,test_on=test_on,config=config,batch_size= batch_size, valid_on=valid_on)
+    
+    print("files_per_categ", files_per_categ)
+    print("files_for_test", files_for_test)
 
     # 优化器是Adam
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     categs_to_consider = files_per_categ.keys()
 
-    print("categs_to_consider:" + str(categs_to_consider))
 
     with open('categ_of_speakers.json', 'r') as fp:
         categ_of_speakers = json.load(fp)  # dict that gives for each category the speakers in it and the available arti

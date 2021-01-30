@@ -100,6 +100,8 @@ class Speaker_TORGO(Speaker):
             else:
                 marge = 0
                 xtrm = time["time"]
+                if xtrm[1] = 0:
+                    return ema, mfcc
                 xtrm = [max(xtrm[0] - marge, 0), xtrm[1] + marge]
                 xtrm_temp_ema = [int(np.floor(xtrm[0] * self.sampling_rate_ema)),
                          int(min(np.floor(xtrm[1] * self.sampling_rate_ema) + 1, len(ema)))]

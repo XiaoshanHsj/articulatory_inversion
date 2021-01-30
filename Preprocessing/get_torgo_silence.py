@@ -63,6 +63,9 @@ for sp in speakers:
                 temp["time"] = times
                 j[name] = temp
 
+            os.remove(name+".txt")
+
+        
     time_data = json.dumps(j)
     filename = sp+".json"
     with open(dest_dir + m + "/" + filename, 'w') as f:

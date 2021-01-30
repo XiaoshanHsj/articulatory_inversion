@@ -16,6 +16,7 @@ import librosa
 from Preprocessing.tools_preprocessing import get_speakers_per_corpus
 from Preprocessing.class_corpus import Speaker
 import glob
+import json
 
 root_path = dirname(dirname(os.path.realpath(__file__)))
 
@@ -80,26 +81,34 @@ class Speaker_TORGO(Speaker):
         return ema
 
     
-    def remove_silences(self,k, ema, mfcc):
+    def remove_silences(self, name, ema, mfcc):
         """
-       :param k:  utterance index (wrt the list EMA_files)
-       :param ema: the ema list of traj
-       :param mfcc: the mfcc features
-       :return: the data (ema and mfcc) without the silence at the beginning and end of the recording
+        :param k:  utterance index (wrt the list EMA_files)
+        :param ema: the ema list of traj
+        :param mfcc: the mfcc features
+        :return: the data (ema and mfcc) without the silence at the beginning and end of the recording
 
-       """
+        """
+        sp = name.split("_")[0]
+        time_path = "/project_bdda3/bdda/sjhu/Projects/my_git/articulatory_inversion/Preprocessing/torgo_speaker_silence/"
+        with open(time_path + sp + ".json", 'r') as f:
+            content = f.read()
+            times = json.loads(content)
+            time = times[name]
+            if time["have_silence"] is False:
+                return ema, mfcc
+            else:
+                marge = 0
+                xtrm = time["time"]
+                xtrm = [max(xtrm[0] - marge, 0), xtrm[1] + marge]
+                xtrm_temp_ema = [int(np.floor(xtrm[0] * self.sampling_rate_ema)),
+                         int(min(np.floor(xtrm[1] * self.sampling_rate_ema) + 1, len(ema)))]
+                xtrm_temp_mfcc = [int(np.floor(xtrm[0] / self.hop_time)),
+                                int(np.ceil(xtrm[1] / self.hop_time))]
+                ema = ema[xtrm_temp_ema[0]:xtrm_temp_ema[1], :]
+                mfcc = mfcc[xtrm_temp_mfcc[0]:xtrm_temp_mfcc[1]]
+                return ema, mfcc
 
-        marge=0
-        n_points_de_silences_ema = int(np.floor(marge * self.sampling_rate_ema))
-        xtrm_temp_ema = [n_points_de_silences_ema, len(ema) - n_points_de_silences_ema]
-
-        n_frames_de_silences_mfcc = int(np.floor(marge / self.hop_time))
-        xtrm_temp_mfcc = [n_frames_de_silences_mfcc, len(mfcc) - n_frames_de_silences_mfcc]
-        #   print("avant ",mfcc.shape)
-        mfcc = mfcc[xtrm_temp_mfcc[0]:xtrm_temp_mfcc[1]]
-        ema = ema[xtrm_temp_ema[0]:xtrm_temp_ema[1], :]
-        # print("apres",mfcc.shape)
-        return ema, mfcc
 
     def from_wav_to_mfcc(self, wav):
         mfcc = librosa.feature.mfcc(y=wav, sr=self.sampling_rate_wav, n_mfcc=self.n_coeff,
@@ -129,7 +138,7 @@ class Speaker_TORGO(Speaker):
             wav, sr = librosa.load(path_wav, sr=self.sampling_rate_wav)
             wav = 0.5 * wav / np.max(wav)
             mfcc = self.from_wav_to_mfcc(wav)
-            ema_VT_smooth, mfcc = self.remove_silences(i, ema_VT_smooth, mfcc)
+            ema_VT_smooth, mfcc = self.remove_silences(self.EMA_files[i], ema_VT_smooth, mfcc)
             ema_VT_smooth, mfcc = self.synchro_ema_mfcc(ema_VT_smooth, mfcc)
             np.save(os.path.join(root_path, "Preprocessed_data", self.speaker, "ema", self.EMA_files[i]), ema_VT)
             np.save(os.path.join(root_path, "Preprocessed_data", self.speaker, "mfcc", self.EMA_files[i]), mfcc)

@@ -139,7 +139,8 @@ class Speaker_TORGO(Speaker):
             wav = 0.5 * wav / np.max(wav)
             mfcc = self.from_wav_to_mfcc(wav)
             ema_VT_smooth, mfcc = self.remove_silences(self.EMA_files[i], ema_VT_smooth, mfcc)
-            ema_VT_smooth, mfcc = self.synchro_ema_mfcc(ema_VT_smooth, mfcc)
+            n_frames_wanted = mfcc.shape[0]
+            ema_VT_smooth = scipy.signal.resample(ema, num=n_frames_wanted)
             np.save(os.path.join(root_path, "Preprocessed_data", self.speaker, "ema", self.EMA_files[i]), ema_VT)
             np.save(os.path.join(root_path, "Preprocessed_data", self.speaker, "mfcc", self.EMA_files[i]), mfcc)
             np.save(os.path.join(root_path, "Preprocessed_data", self.speaker, "ema_final", self.EMA_files[i]), ema_VT_smooth)

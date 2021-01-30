@@ -6,7 +6,7 @@ speakers = ["F01", "F03", "F04", "FC01", "FC02", "FC03","M01", "M02", "M03", "M0
 
 # 对于每一个说话人，依次扫描SESSION,如果有pos和wav_array就就复制到Raw_data/torgo中
 # torgo的文件目录为speaker/wav speaker/prompt speaker/pos
-# 每个文件夹内容为session_0001.xxx
+# 每个文件夹内容为sp_session_0001.xxx
 
 def process():
     for sp in speakers:

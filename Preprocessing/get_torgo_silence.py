@@ -35,7 +35,7 @@ for sp in speakers:
                 if flag:
                     # 如果只有一个silence_start，就说明从这里开始全是silence
                     if length == 2:
-                        t = float(x[1].spilt(":")[1])
+                        t = float(x[1].split(":")[1])
                         times[1] = t
                     else:
                         t_e = float(x[2].split("|")[0].split(":")[1])

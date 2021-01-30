@@ -18,10 +18,16 @@ for sp in speakers:
     for wav in wav_files:
         abs_path = os.path.join(wav_path, wav)
         name = wav[:-4]
-        os.system('ffmpeg -i "%s" -af silencedetect=n=-38dB:d=0.5 -f null - 2>&1 | grep -E "silence_(start|end)|Duration > %s.txt' % (abs_path, name))
+        os.system('ffmpeg -i "%s" -af silencedetect=n=-38dB:d=0.5 -f null - 2>&1 | grep -E "silence_(start|end)|Duration" > %s.txt' % (abs_path, name))
         if os.path.exists(name+".txt"):
             with open(name + ".txt") as f:
-                duration = f.readline().split(",")[0].split("n")[1].split(" ")[1]
+                x = f.readlines()
+                length = len(x)
+                flag = False
+                times = [0, 0]
+                if(length > 1):
+                    flag = True
+                duration = x[0].split(",")[0].split("n")[1].split(" ")[1]
                 d_list = duration.split(":")
                 hour = int(d_list[0])
                 minute = int(d_list[1])
@@ -59,5 +65,5 @@ for sp in speakers:
 
     time_data = json.dumps(j)
     filename = sp+".json"
-    with open(dest_dir + m + filename, 'w') as f:
+    with open(dest_dir + m + "/" + filename, 'w') as f:
         f.write(time_data)

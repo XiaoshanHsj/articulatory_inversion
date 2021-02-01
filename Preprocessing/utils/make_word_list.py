@@ -16,7 +16,7 @@ for sp in speakers:
         pro_path = raw_path + sp + "/" + sess + "/prompts/" + num + ".txt"
         with open(pro_path, 'r') as f:
             line = f.readline()
-            if line.find(".jpg") != 0 or line.find("[") != 0 or line.find("]") != 0:
+            if line.find(".jpg") != -1 or line.find("[") != -1 or line.find("]") != -1:
                 # 此时我们需要将对应的.wav和.pos删去
                 wav_abs_path = wav_path + "/" + wav
                 pos_abs_path = ori_path + sp + "/pos/" + name + ".pos"

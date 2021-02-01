@@ -20,8 +20,8 @@ with open(out_mlf_path, 'w') as f_w:
             except:
                 print(line.strip())
             s = s[s.rfind("X")+1:]
-            sp = s[0:2]
-            sess = "Session" + s[2:][-1]
+            sess = "Session" + s[0:2][-1]
+            sp = s[2:]
             index = index.split('_')[1].lstrip('X')
             
             pro_path = raw_path + sp + "/" + sess + "/prompts/" + index + ".txt"

@@ -33,6 +33,9 @@ with open(out_mlf_path, 'w') as f_w:
                 mlf_full_path = "\"*/" + mlf_path + ".lab\""
                 f_w.write(mlf_full_path + '\n')
                 words = utterance.split()
-                for word in words:  
+                for word in words:
+                    if not word[-1].isalpha():
+                        word = word[:-1]
+                    word = word.upper()
                     f_w.write(word + '\n')
                 f_w.write('.\n')

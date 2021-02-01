@@ -24,7 +24,9 @@ def process():
                     if not os.path.exists(des_path+"/"+sp):
                         print("create " + des_path+"/"+sp)
                         os.mkdir(des_path+"/"+sp)
-                    pre = sp + "_" +d + "_"
+                    d_num = d[-1]
+
+                    pre = sp + "_S" +d_num + "_"
                     # 处理pos
                     pos_list = os.listdir(sess+"/pos")
                     if not os.path.exists(des_path+"/"+sp+"/pos"):

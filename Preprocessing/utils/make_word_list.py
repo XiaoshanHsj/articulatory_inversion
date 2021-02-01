@@ -27,13 +27,13 @@ for sp in speakers:
                 print(pro_path)
         else:
             with open(pro_path, 'r') as f:
-            line = f.readline()
-            if line.find(".jpg") != -1 or line.find("[") != -1 or line.find("]") != -1:
-                # 此时我们需要将对应的.wav和.pos删去
-                try:
-                    os.remove(wav_abs_path)
-                    print("删去了" + wav_abs_path)
-                    os.remove(pos_abs_path)
-                    print("删去了" + pos_abs_path)
-                except:
-                    print(line)
+                line = f.readline()
+                if line.find(".jpg") != -1 or line.find("[") != -1 or line.find("]") != -1:
+                    # 此时我们需要将对应的.wav和.pos删去
+                    try:
+                        os.remove(wav_abs_path)
+                        print("删去了" + wav_abs_path)
+                        os.remove(pos_abs_path)
+                        print("删去了" + pos_abs_path)
+                    except:
+                        print(line)

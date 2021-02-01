@@ -17,7 +17,7 @@ with open(train_scp, 'w') as f2:
             a2 = str(a1)
             a1 = str(a1).zfill(7)
 
-            logic = line.split('/')[9]
+            logic = line.split('/')[10]
             logic1 = logic.split('.')[0]
             logic = logic1+'_0000000_'+ a1 + '.plp'
 

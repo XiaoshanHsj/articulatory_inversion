@@ -36,6 +36,10 @@ with open(out_mlf_path, 'w') as f_w:
                 for word in words:
                     if not word[-1].isalpha():
                         word = word[:-1]
+                    if not word[0].isalpha():
+                        word = word[1:]
                     word = word.upper()
+                    if word == "XRAY":
+                        word = "X-RAY"
                     f_w.write(word + '\n')
                 f_w.write('.\n')

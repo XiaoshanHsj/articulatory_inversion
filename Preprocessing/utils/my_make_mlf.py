@@ -34,9 +34,9 @@ with open(out_mlf_path, 'w') as f_w:
                 f_w.write(mlf_full_path + '\n')
                 words = utterance.split()
                 for word in words:
-                    if not word[-1].isalpha():
+                    while not word[-1].isalnum():
                         word = word[:-1]
-                    if not word[0].isalpha():
+                    while not word[0].isalnum():
                         word = word[1:]
                     word = word.upper()
                     if word == "XRAY":

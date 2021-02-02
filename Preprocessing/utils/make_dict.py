@@ -14,6 +14,6 @@ with open(save_path + filename, "w") as f_w:
             else:
                 new_line = word + "\t\t"
                 for phone in phones:
-                    new_line = new_line + phone + "\t"
+                    new_line = new_line + phone.lower() + "\t"
                 new_line = new_line[:-1]
                 f_w.write(new_line + "\n")

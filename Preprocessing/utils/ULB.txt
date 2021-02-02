@@ -1,0 +1,25 @@
+# -----------------------------------------------------------------
+# Task specific information for a NST dataset
+
+setenv SETNAME uaspeech
+#setenv SETID MGBCHLG
+
+# Where the data is on the system
+# setenv BABELBASE /home/blueb/nst/yq236/asr/swbd
+setenv BABELBASE /scratch/bdda/jwyu/Task/uaspeech_newcfgs
+#setenv IMPORTDIR ${BABELBASE}/import
+#setenv SOURCEDIR ${IMPORTDIR}
+setenv IMPORTDIR NULL
+setenv SOURCEDIR NULL
+
+# Where to put the coded data
+#setenv TGTDATADIR ${BABELBASE}/data
+setenv CONVERTDIR ${BABELBASE}/convert
+
+# Location of scoring and whether it's character-level
+setenv SCORINGDIR ${BABELBASE}/scoring/scoring.swbd
+
+# Coding set-up - ensures leading name is only 6 characters
+# PERLANG_out MUST be 6 characters do not change
+setenv PERLANG_in NOTBABEL
+setenv PERLANG_out NOTBABEL
